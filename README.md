@@ -26,10 +26,6 @@ A web-based application for managing employee check-in and check-out data. Desig
 - `edit.php`, `del.php`, `download.php` – CRUD operations  
 - `*.php` – Additional components and utilities
 
-## 📸 Screenshots
-
-_Add screenshots of the UI if available._
-
 ## 🚀 Getting Started
 
 1. Clone or download this repository  
@@ -37,6 +33,3 @@ _Add screenshots of the UI if available._
 3. Edit `config.php` to match your database credentials  
 4. Run the project on a local server (e.g., XAMPP)
 
-## 📄 License
-
-This project is for educational and demonstration purposes.
