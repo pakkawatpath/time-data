@@ -36,7 +36,7 @@ $upload = ("INSERT INTO `dbs`(`PersonID`,
                     `type`
             FROM `newdata` n
             WHERE `type` = '1'
-            AND  n.`Time` NOT IN (SELECT `Time` FROM `dbs`)
+            AND  (n.`Time` NOT IN (SELECT `Time` FROM `dbs`) OR n.`PersonID` NOT IN (SELECT `PersonID` FROM `dbs`))
             ");
 
 //echo $upload;

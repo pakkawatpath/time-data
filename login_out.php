@@ -12,6 +12,8 @@ if (isset($_POST['Username'])) {
     $com = "BGT";
   } elseif ($com == "BGTLO") {
     $com = "BGTL";
+  } elseif ($com == "Scli" || $com == "Kanesh") {
+    $com = "other";
   }
 
   if ($com != 'other') {
@@ -34,24 +36,27 @@ if (isset($_POST['Username'])) {
       $_SESSION["Level"] = "user";
       header("Location: homeu.php?Page=1");
     }
+  } else {
+    $sql = "SELECT * FROM `users` Where `User`='" . $Username . "' and `Password`='" . $Password . "' ";
+
+    $result = mysqli_query($conn, $sql);
   }
-
-
-  $sql = "SELECT * FROM `users` Where `User`='" . $Username . "' and `Password`='" . $Password . "' ";
-
-  $result = mysqli_query($conn, $sql);
 
   //select p.prs_e_card,w.WBP_NAME,w.WBP_PASSWORD from [PERSONALINFO] p,[WEBUSERPROFILE] w where  p.prs_emp=w.wbp_emp
   //Database BGT,BGTL,GSG,JN,PST,PSTE2,TPN,TSHI
 
   if (mysqli_num_rows($result) == 1) {
     $row = mysqli_fetch_array($result);
-    $_SESSION["UserID"] = $row["User"];
     $_SESSION["Level"] = $row["level"];
-    $_SESSION["User"] = $row["Name"] . " " . $row["Lastname"];
 
     if ($_SESSION["Level"] == "super_admin" || $_SESSION["Level"] == "admin") {
+      $_SESSION["UserID"] = $row["User"];
+      $_SESSION["User"] = $row["Name"] . " " . $row["Lastname"];
       header("Location: home.php?Page=1");
+    } else {
+      $_SESSION["UserID"] = $row["Password"];
+      $_SESSION["User"] = $row["Name"] . " " . $row["Lastname"];
+      header("Location: homeu.php?Page=1");
     }
 
 ?>
