@@ -38,7 +38,7 @@ $page = $_GET['page'];
         }
 
         #bt {
-            text-align:center;
+            text-align: center;
         }
 
         #do {
@@ -48,7 +48,7 @@ $page = $_GET['page'];
             font-size: 24px;
         }
 
-        #save{
+        #save {
             margin-bottom: 5px;
         }
     </style>
@@ -205,7 +205,35 @@ $page = $_GET['page'];
             </tbody>
 
         </table></br>
-    <?php } ?>
+    <?php }
+
+    if ($page == "pdf") {
+    ?>
+        
+            <div style="text-align:center;">
+                <div style="margin-top: 100px;"></div>
+                <form action="download.php" method="post">
+                    <select name="name">
+                        <option value="">--SELECT--</option>
+                        <?php
+                        $sql = "SELECT DISTINCT `Name` FROM `dbs` ORDER BY `Name` ASC";
+                        $result = mysqli_query($conn, $sql);
+                        while ($row = $result->fetch_array()) :
+                        ?>
+                            <option value="<?php echo $row['Name'] ?>"><?php echo $row['Name'] ?></option>
+                        <?php endwhile
+                        ?>
+                    </select>
+                    <div style="margin-top: 10px;"></div>
+                    <input type="date" name="from"> to Date: <input type="date" name="to">
+                    <div style="margin-top: 10px;"></div>
+                    <input type="submit" name="downpdf" value="Download">
+                </form>
+            </div>
+        
+    <?php
+    }
+    ?>
 
 </body>
 

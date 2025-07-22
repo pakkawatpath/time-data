@@ -369,35 +369,77 @@ if (isset($_POST['download'])) {
             alert("ไม่มีข้อมูล ไม่สามารถดาวน์โหลดได้");
             window.history.back();
         </script>
-    <?php
+<?php
     }
 }
 
-if (isset($_POST['name'])) {
+if (isset($_POST['downpdf'])) {
+    require_once __DIR__ . '/vendor/autoload.php';
 
-    $query = "SELECT `PersonID`, `Name`, `Department`, `Time`, `AttendanceStatus`, `AttendanceCheckPoint`, `CustomName`, `DataSource`, `HandlingType`, `Temperature`, `Abnormal` FROM `dbs` ORDER BY `PersonID`,`Time`";
-    //echo ' 2 ' . $query;
-    $result = mysqli_query($conn, $query);
+    $defaultConfig = (new Mpdf\Config\ConfigVariables())->getDefaults();
+    $fontDirs = $defaultConfig['fontDir'];
 
-    if ($result->num_rows > 0) {
-        $tasks = array();
-        $filename = "all" . ".xls";
+    $defaultFontConfig = (new Mpdf\Config\FontVariables())->getDefaults();
+    $fontData = $defaultFontConfig['fontdata'];
 
-        while ($rows = $result->fetch_assoc()) {
-            $tasks[] = $rows;
+    $mpdf = new \Mpdf\Mpdf([
+        'fontDir' => array_merge($fontDirs, [
+            __DIR__ . '/fonts',
+        ]),
+        'fontdata' => $fontData + [
+            'sarabun' => [
+                'R' => 'THSarabunNew.ttf',
+                'I' => 'THSarabunNew Italic.ttf',
+                'B' => 'THSarabunNew Bold.ttf'
+            ]
+        ],
+    ]);
+
+    $name = $_POST['name'];
+    $from = $_POST['from'];
+    $to = $_POST['to'];
+
+    $sql = "SELECT * FROM `dbs` WHERE `Name` = '$name' AND `Time` BETWEEN '$from 00:00:00' AND '$to 23:59:59'";
+    echo $sql;
+    $result = mysqli_query($conn, $sql);
+    $content = "
+    <style>
+        body {
+            font-family: 'Sarabun';
         }
 
-        header('Content-Type: application/vnd.ms-excel ; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            text-align:center;
+        }
+    </style>
 
-        Exportfile($tasks);
-    } else { ?>
-        <script>
-            alert("ไม่มีข้อมูล ไม่สามารถดาวน์โหลดได้");
-            window.history.back();
-        </script>
-<?php
-    }
+    <table style='width:100%'>
+    <thead>
+    <tr>e
+        <th>PersonID</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Time</th>
+        <th>AttendanceCheckPoint</th>
+    </tr>
+    </thead>";
+
+    while ($row = $result->fetch_array()) {
+        $content .= "<tr>";
+        $content .= "<td>" . $row['PersonID'] . "</td>";
+        $content .= "<td>" . $row['Name'] . "</td>";
+        $content .= "<td>" . $row['Department'] . "</td>";
+        $content .= "<td>" . $row['Time'] . "</td>";
+        $content .= "<td>" . $row['AttendanceCheckPoint'] . "</td>";
+        $content .= "</tr>";
+    };
+
+    $content .= "</table>";
+
+    $mpdf->WriteHTML($content);
+    $mpdf->Output($name . ".pdf", 'D');
 }
 
 

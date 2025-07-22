@@ -54,6 +54,9 @@ include_once "db.php";
             <div class="col">
                 <a href='page.php?page=company'><i class="fa fa-building" style="font-size: 80px;"></i><br>Company</a>
             </div>
+            <div class="col">
+                <a href='page.php?page=pdf'><i class="fa fa-file" style="font-size: 80px;"></i><br>PDF</a>
+            </div>
         </div>
     </div>
 
